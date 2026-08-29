@@ -1,0 +1,28 @@
+name: Daily University Scan
+
+on:
+  schedule:
+    # Runs automatically every day at 08:00 UTC
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Allows you to manually click a button to run it anytime
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run scanner script
+        run: python scraper.py
