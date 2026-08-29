@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Allows GitHub Actions to commit history.json back to your repo
+  contents: write # Grants permission to commit history.json back to repo
 
 jobs:
   scan:
