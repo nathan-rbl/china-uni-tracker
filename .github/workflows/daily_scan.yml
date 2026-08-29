@@ -2,9 +2,11 @@ name: Daily University Scan
 
 on:
   schedule:
-    # Runs automatically every day at 08:00 UTC
     - cron: '0 8 * * *'
-  workflow_dispatch: # Allows you to manually click a button to run it anytime
+  workflow_dispatch:
+
+permissions:
+  contents: write # Allows GitHub Actions to commit history.json back to your repo
 
 jobs:
   scan:
@@ -25,4 +27,14 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run scanner script
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python scraper.py
+
+      - name: Save updated history state
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add history.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update portal state history [skip ci]" && git push)
